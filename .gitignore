@@ -1,0 +1,21 @@
+# 排除 docs 和 project 目录（暂不提交）
+docs/
+project/
+
+# 排除敏感/本地配置
+.claude/settings.local.json
+.claude/mcp-mssql-ecology.sh
+.claude/sdk/pwd.md
+.claude/sdk/python/__pycache__/
+
+# 排除备份文件
+*.bak
+
+# 排除临时文件
+*.tmp
+*.log
+.DS_Store
+
+# 排除 IDE
+.idea/
+.vscode/
