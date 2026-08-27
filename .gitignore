@@ -6,6 +6,7 @@ project/
 .claude/settings.local.json
 .claude/mcp-mssql-ecology.sh
 .claude/sdk/pwd.md
+.claude/sdk/switch-env.sh
 .claude/sdk/python/__pycache__/
 .claude/formmode-engine.md
 .claude/knowledge-graph-ecology9.md
