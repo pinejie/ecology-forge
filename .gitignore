@@ -7,6 +7,8 @@ project/
 .claude/mcp-mssql-ecology.sh
 .claude/sdk/pwd.md
 .claude/sdk/python/__pycache__/
+.claude/formmode-engine.md
+.claude/knowledge-graph-ecology9.md
 
 # 排除备份文件
 *.bak
