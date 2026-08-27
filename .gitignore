@@ -9,6 +9,7 @@ project/
 # 排除敏感/本地配置
 .claude/settings.local.json
 .claude/mcp-mssql-ecology.sh
+.claude/sdk/db-config.md
 .claude/sdk/switch-env.sh
 .claude/sdk/python/__pycache__/
 .claude/sdk/python/demo.py
