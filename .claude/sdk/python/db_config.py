@@ -11,11 +11,11 @@ def load_db_config():
     从 .claude/sdk/pwd.md 读取数据库连接配置。
     返回 dict: {"host": ..., "port": ..., "user": ..., "password": ..., "database": ...}
     """
-    pwd_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "pwd.md")
+    pwd_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "db-config.md")
     if not os.path.exists(pwd_path):
         raise FileNotFoundError(
             f"数据库配置文件不存在: {pwd_path}\n"
-            "请先在 .claude/sdk/pwd.md 中写入 host/user/password/database"
+            "请先在 .claude/sdk/db-config.md 中写入 host/user/password/database"
         )
 
     config = {}
