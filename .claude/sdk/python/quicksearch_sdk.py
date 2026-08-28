@@ -13,7 +13,7 @@
 使用示例：
     from quicksearch_sdk import QuickSearchSDK
 
-    sdk = QuickSearchSDK(host="...", user="sa", password="Weaver@2001", database="ecology")
+    sdk = XXX()  # 配置从 db-config.md 读取
 
     # 创建快捷搜索主配置
     sdk.create_quicksearch_setting(query_id=2732)

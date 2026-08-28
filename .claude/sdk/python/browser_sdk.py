@@ -10,7 +10,7 @@ SDK 只管执行，不做分析。调用前需完成字段角色分析（见 .cl
 使用示例：
     from browser_sdk import BrowserSDK
 
-    sdk = BrowserSDK(host="...", user="sa", password="Weaver@2001", database="ecology")
+    sdk = XXX()  # 配置从 db-config.md 读取
 
     # 创建浏览框（基础信息 + 字段定义 + 浏览按钮，一步到位）
     result = sdk.create_browser(
@@ -53,7 +53,7 @@ class BrowserSDK:
         if not self.password:
             raise RuntimeError("数据库密码未配置，请检查 .claude/sdk/db-config.md ")
         # OA 前端地址（用于调用 JSP 缓存刷新接口）
-        self.oa_host = host or load_oa_config()["oa_host"]
+        self.oa_host = load_oa_config()["oa_host"]
 
     def _connect(self):
         return pymssql.connect(

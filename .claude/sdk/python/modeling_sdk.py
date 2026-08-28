@@ -9,7 +9,7 @@
 使用示例：
     from modeling_sdk import ModelingSDK
 
-    sdk = ModelingSDK(host="...", user="sa", password="Weaver@2001", database="ecology")
+    sdk = XXX()  # 配置从 db-config.md 读取
     app_id = sdk.create_app("测试应用", parent_id=1054)
 """
 

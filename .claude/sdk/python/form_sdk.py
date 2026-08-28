@@ -9,7 +9,7 @@
 使用示例：
     from form_sdk import FormSDK
 
-    sdk = FormSDK(host="...", user="sa", password="Weaver@2001", database="ecology")
+    sdk = XXX()  # 配置从 db-config.md 读取
     form_id = sdk.create_form("测试订单", app_id=1054, table_name="uf_TestOrder", fields=[...])
 
 规则文档：docs/sdk-references/form-rules.md

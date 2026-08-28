@@ -14,7 +14,7 @@
 使用示例：
     from list_sdk import ListSDK
 
-    sdk = ListSDK(host="...", user="sa", password="Weaver@2001", database="ecology")
+    sdk = XXX()  # 配置从 db-config.md 读取
 
     # 创建查询
     query_id = sdk.create_query(

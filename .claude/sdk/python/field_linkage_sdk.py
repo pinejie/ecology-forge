@@ -16,7 +16,7 @@
 使用示例：
     from field_linkage_sdk import FieldLinkageSDK
 
-    sdk = FieldLinkageSDK(host="...", user="sa", password="Weaver@2001", database="ecology")
+    sdk = XXX()  # 配置从 db-config.md 读取
 
     # 查询模块现有联动规则
     rules = sdk.list_linkages(module_id=2405)

@@ -9,7 +9,7 @@
 使用示例：
     from layout_sdk import LayoutSDK
 
-    sdk = LayoutSDK(host="...", user="sa", password="Weaver@2001", database="ecology")
+    sdk = XXX()  # 配置从 db-config.md 读取
 
     # 简单调用：自动查询字段，默认按 ID 排序
     result = sdk.generate_layout_json(form_id=-1003)

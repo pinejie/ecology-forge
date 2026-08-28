@@ -9,7 +9,7 @@
 使用示例：
     from module_sdk import ModuleSDK
 
-    sdk = ModuleSDK(host="...", user="sa", password="Weaver@2001", database="ecology")
+    sdk = XXX()  # 配置从 db-config.md 读取
     module_id = sdk.create_module("项目基本信息", app_id=1066, form_id=-1003)
 """
 

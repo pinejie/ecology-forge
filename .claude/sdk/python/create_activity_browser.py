@@ -4,12 +4,7 @@ sys.path.insert(0, "/home/wangg/workspace/.claude/sdk/python")
 
 from browser_sdk import BrowserSDK
 
-sdk = BrowserSDK(
-    host="...",
-    user="sa",
-    password="Weaver@2001",
-    database="ecology"
-)
+sdk = BrowserSDK()  # 配置从 db-config.md 读取
 
 result = sdk.create_browser(
     name="活动",

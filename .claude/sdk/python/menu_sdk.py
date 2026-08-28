@@ -10,7 +10,7 @@ SDK 只管执行，不做分析。
 使用示例：
     from menu_sdk import MenuSDK
 
-    sdk = MenuSDK(host="...", user="sa", password="Weaver@2001", database="ecology")
+    sdk = XXX()  # 配置从 db-config.md 读取
 
     # 创建一级菜单（党团管理）
     menu_id = sdk.create_menu(
@@ -55,7 +55,7 @@ class MenuSDK:
         if not self.password:
             raise RuntimeError("数据库密码未配置，请检查 .claude/sdk/db-config.md ")
         # OA 前端地址（用于调用 JSP 缓存清理接口）
-        self.oa_host = host or load_oa_config()["oa_host"]
+        self.oa_host = load_oa_config()["oa_host"]
 
     @expose(
         description="清除菜单缓存。通过 HTTP 调用 clearMenuCache.jsp 使菜单变更立即生效。删除/创建/修改菜单后自动调用，也可手动触发。",
