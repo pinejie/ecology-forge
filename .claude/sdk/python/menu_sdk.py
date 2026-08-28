@@ -332,10 +332,19 @@ class MenuSDK:
             if parent_id == 0:
                 menu_level = 1
             else:
-                cursor.execute("SELECT menuLevel FROM %s WHERE id = %s" % (info_table, parent_id))
+                cursor.execute(
+                    "SELECT menuLevel, customName FROM %s WHERE id = %s" % (info_table, parent_id)
+                )
                 parent_row = cursor.fetchone()
                 if not parent_row:
                     raise ValueError("父级菜单不存在，ID=%d" % parent_id)
+                # 系统根节点（customName 为空）不能作为父菜单
+                parent_custom_name = self._decode(parent_row[1]) if parent_row[1] else ""
+                if not parent_custom_name.strip():
+                    raise ValueError(
+                        "父级菜单 ID=%d 是系统根节点（无名称），不能作为父菜单。"
+                        "一级菜单请使用 parent_id=0" % parent_id
+                    )
                 menu_level = int(parent_row[0]) + 1
 
             # 自动计算 default_index
