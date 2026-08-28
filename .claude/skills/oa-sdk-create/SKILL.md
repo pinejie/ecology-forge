@@ -406,11 +406,19 @@ MCP tool 调用结果必须是结构化 JSON：
 
 ## 七、现有能力清单
 
-| 能力 | SDK 文件 | 状态 |
-|------|---------|------|
-| 应用（App） | `sdk/python/modeling_sdk.py` | 已完成 |
-| 表单（Form） | `sdk/python/form_sdk.py` | 已完成 |
-| 模块（Module） | — | 待开发 |
-| 查询（Query） | — | 待开发 |
-| 浏览框（Browser） | — | 待开发 |
-| 缓存清理 | — | 待开发 |
+| 能力 | SDK 文件 | 工具数 | 状态 |
+|------|---------|--------|------|
+| 应用（App） | `sdk/python/modeling_sdk.py` | 5 | ✅ 已完成 |
+| 表单（Form） | `sdk/python/form_sdk.py` | 7 | ✅ 已完成 |
+| 浏览框（Browser） | `sdk/python/browser_sdk.py` | 5 | ✅ 已完成 |
+| 模块（Module） | `sdk/python/module_sdk.py` | 5 | ✅ 已完成 |
+| 布局配置（Layout） | `sdk/python/layout_sdk.py` | 2 | ✅ 已完成 |
+| 查询列表（Query） | `sdk/python/list_sdk.py` | 6 | ✅ 已完成 |
+| 快捷搜索（QuickSearch） | `sdk/python/quicksearch_sdk.py` | 6 | ✅ 已完成 |
+| 菜单（Menu） | `sdk/python/menu_sdk.py` | 8 | ✅ 已完成 |
+| 字段联动（Field Linkage） | `sdk/python/field_linkage_sdk.py` | 4 | ✅ 已完成 |
+| 缓存（Cache） | `sdk/python/cache_sdk.py` | 1 | ✅ 已完成 |
+| 流程引擎 | — | — | 🔴 未完成 |
+| 移动建模 | — | — | 🔴 未完成 |
+| 定时任务 | — | — | 🔴 未完成 |
+| 角色权限 | — | — | 🔴 未完成 |
