@@ -37,7 +37,7 @@ from typing import List, Dict, Optional
 
 from mcp_register import expose
 from cache_sdk import refresh_label_cache
-from db_config import load_db_config
+from db_config import load_db_config, load_oa_config
 
 
 class BrowserSDK:
@@ -53,7 +53,7 @@ class BrowserSDK:
         if not self.password:
             raise RuntimeError("数据库密码未配置，请检查 .claude/sdk/pwd.md 或环境变量 OA_DB_PASSWORD")
         # OA 前端地址（用于调用 JSP 缓存刷新接口）
-        self.oa_host = os.environ.get("OA_HOST", "http://xcx.zhongda.cn:8080")
+        self.oa_host = host or load_oa_config()["oa_host"]
 
     def _connect(self):
         return pymssql.connect(

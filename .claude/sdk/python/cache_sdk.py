@@ -18,15 +18,15 @@
 
 import requests
 from mcp_register import expose
+from db_config import load_oa_config
 
-OA_HOST = "http://xcx.zhongda.cn:8080"
 
 
 class CacheSDK:
     """OA 缓存管理 SDK"""
 
     def __init__(self, host: str = None):
-        self.host = host or OA_HOST
+        self.host = host or load_oa_config()["oa_host"]
 
     @expose(
         description="清除 LabelComInfo 内存缓存，使新建/修改的表单 label 立即生效。创建表单后自动调用，无需手动触发。",

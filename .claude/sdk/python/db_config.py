@@ -42,3 +42,27 @@ def load_db_config():
         "password": config["password"],
         "database": config["database"],
     }
+
+
+def load_oa_config():
+    """
+    从 .claude/sdk/db-config.md 读取 OA 服务地址。
+    返回 dict: {"oa_host": ...}
+    """
+    pwd_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "db-config.md")
+    if not os.path.exists(pwd_path):
+        raise FileNotFoundError(f"配置文件不存在: {pwd_path}")
+
+    config = {}
+    with open(pwd_path, "r", encoding="utf-8") as f:
+        for line in f:
+            line = line.strip().lstrip("- ").strip()
+            if line.startswith("**") and "**:" in line:
+                key = line.split("**")[1].strip()
+                val = line.split("**:")[1].strip()
+                config[key] = val
+
+    if "oa_host" not in config:
+        raise ValueError("db-config.md 缺少 oa_host 字段")
+
+    return {"oa_host": config["oa_host"]}

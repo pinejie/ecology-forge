@@ -36,6 +36,7 @@ import pymssql
 import os
 import requests
 from typing import List, Dict, Optional
+from db_config import load_oa_config
 
 from mcp_register import expose
 from db_config import load_db_config
@@ -54,7 +55,7 @@ class MenuSDK:
         if not self.password:
             raise RuntimeError("数据库密码未配置，请检查 .claude/sdk/pwd.md 或环境变量 OA_DB_PASSWORD")
         # OA 前端地址（用于调用 JSP 缓存清理接口）
-        self.oa_host = os.environ.get("OA_HOST", "http://xcx.zhongda.cn:8080")
+        self.oa_host = host or load_oa_config()["oa_host"]
 
     @expose(
         description="清除菜单缓存。通过 HTTP 调用 clearMenuCache.jsp 使菜单变更立即生效。删除/创建/修改菜单后自动调用，也可手动触发。",
