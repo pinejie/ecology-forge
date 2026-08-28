@@ -80,26 +80,14 @@ class ModelingSDK:
     # ============================================================
 
     @expose(
-        description="在泛微 OA 建模引擎中创建一个新应用。默认创建在「AI实践」应用(ID=1085)下，也可指定其他已有应用作为上级。",
+        description="在泛微 OA 建模引擎中创建一个新应用。默认创建在「AI实践应用」下（按名称查找，不存在则自动创建），也可指定其他已有应用作为上级。",
         examples=[
             {"name": "测试应用"},
             {"name": "项目管理", "parent_id": 1}
         ],
         error_hints={
             "名称不能为空": "请提供应用名称",
-            "parent_id 不能为空或为 0": "默认挂载到 AI实践(ID=1085) 下，或指定其他已有应用 ID",
-            "上级应用不存在": "请检查 parent_id 是否正确，可用 modeling_list_apps 查询"
-        }
-    )
-    @expose(
-        description="在泛微 OA 建模引擎中创建一个新应用。默认创建在「AI实践」应用(ID=1085)下，也可指定其他已有应用作为上级。",
-        examples=[
-            {"name": "测试应用"},
-            {"name": "项目管理", "parent_id": 1}
-        ],
-        error_hints={
-            "名称不能为空": "请提供应用名称",
-            "parent_id 不能为空或为 0": "默认挂载到 AI实践(ID=1085) 下，或指定其他已有应用 ID",
+            "parent_id 不能为 0 或负数": "请指定有效的上级应用 ID，可用 list_apps 查询",
             "上级应用不存在": "请检查 parent_id 是否正确，可用 list_apps 查询"
         }
     )
@@ -114,7 +102,7 @@ class ModelingSDK:
         创建应用
 
         :param name: 应用名称（必填）
-        :param parent_id: 上级应用 ID（必填，默认 1085）。不可为 0 或空，所有 AI 创建的应用默认挂载到「AI实践」(ID=1085) 下
+        :param parent_id: 上级应用 ID（选填）。不传时自动查找名为「AI实践应用」的应用作为父级；若不存在则在根应用下自动创建
         :param description: 应用描述（选填）
         :param show_order: 显示顺序，数值越小越靠前（默认 0）
         :return: 新建应用的 ID
@@ -122,15 +110,50 @@ class ModelingSDK:
         if not name or not name.strip():
             raise ValueError("应用名称不能为空")
 
-        # parent_id 不可为 0 或空，默认 1085（AI实践应用）
-        if parent_id is None:
-            parent_id = 1085
-        if parent_id <= 0:
-            raise ValueError("parent_id 不能为 0 或负数，默认挂载到 AI实践(ID=1085) 下")
-
         conn = self._connect()
         cursor = conn.cursor()
         try:
+            # 默认父级：按名称查找「AI实践应用」，不存在则在根应用下自动创建
+            if parent_id is None:
+                cursor.execute(
+                    "SELECT id FROM modeTreeField WHERE treeFieldName = %s AND isdelete = 0",
+                    (self._encode("AI实践应用"),)
+                )
+                row = cursor.fetchone()
+                if row:
+                    parent_id = int(row[0])
+                else:
+                    # 找根应用（superFieldid=0 的顶级节点）
+                    cursor.execute(
+                        "SELECT id, ISNULL(allSuperFieldId, '') FROM modeTreeField "
+                        "WHERE ISNULL(superFieldid, 0) = 0 AND isdelete = 0"
+                    )
+                    root = cursor.fetchone()
+                    if not root:
+                        raise ValueError("未找到根应用，无法自动创建「AI实践应用」")
+                    root_id = int(root[0])
+                    root_all = str(root[1] or "")
+
+                    sub_company = self._get_sub_company_id(cursor)
+                    all_super = "%s,%s" % (root_all, root_id) if root_all else str(root_id)
+
+                    cursor.execute(
+                        "INSERT INTO modeTreeField "
+                        "(treeFieldName, treeFieldDesc, superFieldid, allSuperFieldId, treelevel, "
+                        "isLast, showOrder, isdelete, subcompanyid, icon, iconColor, iconBg, "
+                        "mobileappid, cubeuuid) "
+                        "VALUES (%s, %s, %s, %s, 1, '0', 0, 0, %s, '', '', '', 0, NEWID())",
+                        (self._encode("AI实践应用"), self._encode("AI 创建的应用统一挂载在此"),
+                         root_id, all_super, sub_company)
+                    )
+                    cursor.execute("SELECT MAX(id) FROM modeTreeField")
+                    parent_id = int(cursor.fetchone()[0])
+                    # AI实践应用 创建完成后，清一次缓存，让后续操作能查到它
+                    self._clear_cache()
+
+            if parent_id <= 0:
+                raise ValueError("parent_id 不能为 0 或负数，请指定有效的上级应用 ID")
+
             # 计算 allSuperFieldId 和 treelevel
             cursor.execute(
                 "SELECT allSuperFieldId, treelevel FROM modeTreeField WHERE id = %s",
