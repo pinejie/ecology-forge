@@ -9,7 +9,7 @@
 使用示例：
     from module_sdk import ModuleSDK
 
-    sdk = ModuleSDK(host="172.18.28.108", user="sa", password="Weaver@2001", database="ecology")
+    sdk = ModuleSDK(host="...", user="sa", password="Weaver@2001", database="ecology")
     module_id = sdk.create_module("项目基本信息", app_id=1066, form_id=-1003)
 """
 
@@ -29,13 +29,13 @@ class ModuleSDK:
 
     def __init__(self, host: str = None, user: str = None, password: str = None, database: str = None, port: int = None):
         defaults = load_db_config()
-        self.host = host or defaults.get("host") or os.environ.get("OA_DB_HOST")
-        self.user = user or defaults.get("user") or os.environ.get("OA_DB_USER")
-        self.password = password or defaults.get("password") or os.environ.get("OA_DB_PASSWORD")
-        self.database = database or defaults.get("database") or os.environ.get("OA_DB_DATABASE")
-        self.port = port or defaults.get("port", 1433)
+        self.host = host or defaults.get("host")
+        self.user = user or defaults.get("user")
+        self.password = password or defaults.get("password")
+        self.database = database or defaults.get("database")
+        self.port = port or defaults.get("port")
         if not self.password:
-            raise RuntimeError("数据库密码未配置，请检查 .claude/sdk/pwd.md 或环境变量 OA_DB_PASSWORD")
+            raise RuntimeError("数据库密码未配置，请检查 .claude/sdk/db-config.md ")
 
     def _connect(self):
         return pymssql.connect(

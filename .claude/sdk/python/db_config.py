@@ -1,5 +1,5 @@
 """
-数据库配置读取——统一从 pwd.md 读取，不再依赖环境变量。
+数据库配置读取——统一从 db-config.md 读取，不再依赖环境变量。
 所有 SDK 的 __init__ 都通过本模块获取连接参数。
 """
 
@@ -8,7 +8,7 @@ import os
 
 def load_db_config():
     """
-    从 .claude/sdk/pwd.md 读取数据库连接配置。
+    从 .claude/sdk/db-config.md 读取数据库连接配置。
     返回 dict: {"host": ..., "port": ..., "user": ..., "password": ..., "database": ...}
     """
     pwd_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "db-config.md")
@@ -31,7 +31,7 @@ def load_db_config():
     missing = [k for k in required if k not in config]
     if missing:
         raise ValueError(
-            f"pwd.md 缺少必填字段: {', '.join(missing)}\n"
+            f"db-config.md 缺少必填字段: {', '.join(missing)}\n"
             f"当前读取到的: {list(config.keys())}"
         )
 

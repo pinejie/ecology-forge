@@ -173,10 +173,10 @@ def _create_sdk_instances(sdk_classes: Dict[str, Any]) -> Dict[str, Any]:
     except Exception:
         defaults = {}
 
-    host = os.getenv("OA_DB_HOST", defaults.get("host", "172.18.28.108"))
-    user = os.getenv("OA_DB_USER", defaults.get("user", "sa"))
-    password = os.getenv("OA_DB_PASSWORD", defaults.get("password", ""))
-    database = os.getenv("OA_DB_DATABASE", defaults.get("database", "ecology"))
+    host = defaults.get("host")
+    user = defaults.get("user")
+    password = defaults.get("password")
+    database = defaults.get("database")
 
     if not password:
         return {}  # 启动时不报错，调用时再检查
@@ -285,7 +285,7 @@ def auto_register(mcp: FastMCP):
                     if class_name not in instances:
                         return json.dumps({
                             "status": "-1",
-                            "message": "数据库连接未配置，请设置环境变量 OA_DB_PASSWORD"
+                            "message": "数据库连接未配置，请在 db-config.md 中配置"
                         }, ensure_ascii=False, indent=2)
 
                     instance = instances[class_name]

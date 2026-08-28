@@ -10,7 +10,7 @@ SDK 只管执行，不做分析。
 使用示例：
     from menu_sdk import MenuSDK
 
-    sdk = MenuSDK(host="172.18.28.108", user="sa", password="Weaver@2001", database="ecology")
+    sdk = MenuSDK(host="...", user="sa", password="Weaver@2001", database="ecology")
 
     # 创建一级菜单（党团管理）
     menu_id = sdk.create_menu(
@@ -47,13 +47,13 @@ class MenuSDK:
 
     def __init__(self, host: str = None, user: str = None, password: str = None, database: str = None, port: int = None):
         defaults = load_db_config()
-        self.host = host or defaults.get("host") or os.environ.get("OA_DB_HOST")
-        self.user = user or defaults.get("user") or os.environ.get("OA_DB_USER")
-        self.password = password or defaults.get("password") or os.environ.get("OA_DB_PASSWORD")
-        self.database = database or defaults.get("database") or os.environ.get("OA_DB_DATABASE")
-        self.port = port or defaults.get("port", 1433)
+        self.host = host or defaults.get("host")
+        self.user = user or defaults.get("user")
+        self.password = password or defaults.get("password")
+        self.database = database or defaults.get("database")
+        self.port = port or defaults.get("port")
         if not self.password:
-            raise RuntimeError("数据库密码未配置，请检查 .claude/sdk/pwd.md 或环境变量 OA_DB_PASSWORD")
+            raise RuntimeError("数据库密码未配置，请检查 .claude/sdk/db-config.md ")
         # OA 前端地址（用于调用 JSP 缓存清理接口）
         self.oa_host = host or load_oa_config()["oa_host"]
 

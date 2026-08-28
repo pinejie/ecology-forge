@@ -5,7 +5,7 @@ sys.path.insert(0, "/home/wangg/workspace/.claude/sdk/python")
 from browser_sdk import BrowserSDK
 
 sdk = BrowserSDK(
-    host="172.18.28.108",
+    host="...",
     user="sa",
     password="Weaver@2001",
     database="ecology"

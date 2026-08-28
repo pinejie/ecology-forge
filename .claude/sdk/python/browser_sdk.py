@@ -10,7 +10,7 @@ SDK 只管执行，不做分析。调用前需完成字段角色分析（见 .cl
 使用示例：
     from browser_sdk import BrowserSDK
 
-    sdk = BrowserSDK(host="172.18.28.108", user="sa", password="Weaver@2001", database="ecology")
+    sdk = BrowserSDK(host="...", user="sa", password="Weaver@2001", database="ecology")
 
     # 创建浏览框（基础信息 + 字段定义 + 浏览按钮，一步到位）
     result = sdk.create_browser(
@@ -45,13 +45,13 @@ class BrowserSDK:
 
     def __init__(self, host: str = None, user: str = None, password: str = None, database: str = None, port: int = None):
         defaults = load_db_config()
-        self.host = host or defaults.get("host") or os.environ.get("OA_DB_HOST")
-        self.user = user or defaults.get("user") or os.environ.get("OA_DB_USER")
-        self.password = password or defaults.get("password") or os.environ.get("OA_DB_PASSWORD")
-        self.database = database or defaults.get("database") or os.environ.get("OA_DB_DATABASE")
-        self.port = port or defaults.get("port", 1433)
+        self.host = host or defaults.get("host")
+        self.user = user or defaults.get("user")
+        self.password = password or defaults.get("password")
+        self.database = database or defaults.get("database")
+        self.port = port or defaults.get("port")
         if not self.password:
-            raise RuntimeError("数据库密码未配置，请检查 .claude/sdk/pwd.md 或环境变量 OA_DB_PASSWORD")
+            raise RuntimeError("数据库密码未配置，请检查 .claude/sdk/db-config.md ")
         # OA 前端地址（用于调用 JSP 缓存刷新接口）
         self.oa_host = host or load_oa_config()["oa_host"]
 
@@ -344,7 +344,7 @@ class BrowserSDK:
         }],
         error_hints={
             "ID 失败": "请稍后重试，可能是并发创建冲突",
-            "数据库密码": "请设置环境变量 OA_DB_PASSWORD"
+            "数据库密码": "请在 db-config.md 中配置"
         }
     )
     def create_browser(self, name: str, app_id: int, form_id: int,
