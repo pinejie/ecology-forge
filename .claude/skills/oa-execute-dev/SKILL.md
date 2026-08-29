@@ -23,6 +23,12 @@ description: "泛微二开执行阶段。用户确认开发设计后触发——
 
 **字段类型以开发设计文档为准。** 执行步骤中的 fields 参数必须携带完整字段类型定义（name、label、type、db_type/length/browser_id/options），按文档传入 SDK。禁止只看字段名就依赖 SDK 的 `_auto_detect_field_type` 自动推断——SDK 的兜底值（varchar 默认 100、float 默认 decimal(38,2)）会覆盖设计文档的精确值。如果开发设计文档中 fields 参数未携带类型，应先读取 `project/{项目名}/01-数据结构设计.md` 补齐后再执行。
 
+**字段类型一致性校验。** 执行 `form_create_form` / `form_add_fields` 前，必须校验：
+- fields 中每个字段的 type 与开发设计文档的逻辑类型完全一致（text、dropdown、textarea、browser、date 等）
+- 类型参数（length、options、browser_id、browser_name、db_type）与开发设计文档一一对应
+- 不允许将 dropdown 改成 text、textarea 改成 varchar、date 改成 text——逻辑类型必须原样传入 SDK
+- 逻辑类型参考 `references/field-type-reference.md`
+
 **脏数据即时清理。** 测试调试产生的数据，用完就清。详细清理规则见 `references/dirty-data-cleanup.md`。
 
 **建模缓存必须刷新。** SDK 通过 SQL 直连数据库创建模块/表单/查询/浏览框后，泛微的 `ModeComInfo`（模块→表单映射）和 `WorkflowBillComInfo`（表单→物理表映射）不会自动更新。不刷缓存的话，用户打开页面新增数据会失败（CubeDoSubmit 从缓存拿不到 formId/table）。所有步骤执行完毕后，必须调用 `modeCacheRefresh.jsp` 刷新建模引擎缓存。
@@ -146,6 +152,7 @@ description: "泛微二开执行阶段。用户确认开发设计后触发——
 | 测试数据留着不清 | 正式执行时冲突 | 用完就清，见脏数据清理规则 |
 | 布局/查询/搜索不分析直接调 SDK | SDK 自动处理不符合业务场景 | 调 SDK 前先输出分组方案、排序逻辑、搜索字段及理由 |
 | 跳过字段忘了补加 | 表单缺失关键字段 | 按数据结构设计文档的"跳过字段清单"逐一补加，补完核对数量 |
+| fields 的 type 和设计文档逻辑类型不一致 | 设计写 dropdown 执行传 text，数据库类型不对 | 执行前校验 fields.type 与设计文档逐字一致，逻辑类型原样传入 SDK |
 
 ## 正面模式
 

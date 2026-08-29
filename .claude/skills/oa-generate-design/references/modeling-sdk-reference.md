@@ -88,7 +88,7 @@
 |------|------|------|------|---------|
 | name | string | 是 | 英文字段名 | `"project_name"` |
 | label | string | 是 | 中文标签 | `"项目名称"` |
-| type | string | 是 | 字段类型 | 见下方"各类型必填参数" |
+| type | string | 是 | 逻辑字段类型 | 见下方"各类型必填参数"，完整清单见 `references/field-type-reference.md` |
 | length | int | 否 | text 类型长度 | `200`，默认 `100` |
 | db_type | string | 否 | 数据库字段类型（覆盖默认） | `"varchar(200)"` / `"decimal(15,2)"` |
 | browser_id | int | 否 | 系统浏览框 ID（type=browser 时） | `1`=人员，`4`=部门 |
@@ -97,19 +97,28 @@
 
 **各类型必填参数**：
 
-| 类型 | 必填参数 | 说明 |
-|------|---------|------|
-| text | `length` | 默认 100，生成 varchar(N) |
-| integer | 无 | 默认 int |
-| float | 无 | 默认 decimal(38,2)，可用 `db_type` 覆盖 |
-| amount | 无 | 默认 decimal(15,2) |
-| textarea | 无 | 可选 `rows`（显示行数）、`html_editor`（富文本） |
-| browser | `browser_id` 或 `browser_name` | 二选一；可选 `is_tree`、`is_multi` |
-| checkbox | 无 | 默认 char(1)，存 0/1 |
-| dropdown | `options` | 下拉选择，必传选项列表 |
-| radio | `options` | 单选，必传选项列表 |
-| multiselect | `options` | 多选，必传选项列表 |
-| file | 无 | 附件上传；可选 `image`=true 切图片模式 |
+| 类型 | 必填参数 | 物理存储 | 说明 |
+|------|---------|---------|------|
+| text | `length` | varchar(N) | 默认 100 |
+| integer | 无 | int | - |
+| float | 无 | decimal(38,2) | 可用 `db_type` 覆盖精度 |
+| amount | 无 | decimal(15,2) | 金额，带中文大写转换 |
+| amount-format | 无 | varchar(30) | 金额千分位显示 |
+| textarea | 无 | text | 可选 `html_editor`=true 切富文本 |
+| browser | `browser_id` 或 `browser_name` | int/varchar | 二选一；可选 `is_tree`、`is_multi` |
+| checkbox | 无 | char(1) | 存 0/1 |
+| dropdown | `options` | int | 下拉选择，选项以整数索引存储 |
+| radio | `options` | int | 单选按钮 |
+| multiselect | `options` | text | 多选 |
+| file | 无 | text | 可选 `image`=true 切图片模式 |
+| date | 无 | char(10) | SDK 自动转 browser(id=2)，日期选择器 |
+| datetime | 无 | varchar(20) | SDK 自动转 browser(id=290) |
+| time | 无 | char(5) | SDK 自动转 browser(id=19) |
+| year | 无 | int | SDK 自动转 browser(id=178) |
+| special | 无 | varchar(4000) | 一般不用 |
+| pubchoice | 无 | integer | 一般不用 |
+
+> **注意：** type 字段只接受上表中的逻辑类型，传物理类型（如 varchar、int）会报错。完整说明和物理存储对应关系见 `references/field-type-reference.md`。
 
 **思考点 — 表单设计**：
 
@@ -123,16 +132,19 @@
 
 **字段分析**：
 
-根据业务场景推断字段类型，只判断属于哪种业务类型，不硬编码技术参数：
+根据业务场景推断字段的逻辑类型，参考 `references/field-type-reference.md` 的"业务场景 → 逻辑类型速查"：
 
-| 业务类型 | 说明 | 怎么判断 |
-|---------|------|---------|
-| 单行文本 | 短文本（姓名、编码等） | 只需说业务含义 |
-| 多行文本 | 长文本（备注、描述等） | 同上 |
-| 浏览框 | 需要选择数据 | 说业务含义（如"选人员"），系统没有则决定用文本框代替或新建自定义浏览框 |
-| check框 | 二元开关（是否、有无） | 同上 |
-| 选择框 | 固定选项下拉 | **必须给出选项列表**（SDK 无法推断） |
-| 附件 | 文件/图片上传 | 只需说业务含义 |
+| 逻辑类型 | 业务场景 | 关键参数 |
+|---------|---------|---------|
+| text | 短文本（姓名、编码、电话等） | length |
+| textarea | 长文本（备注、描述、说明等） | - |
+| integer | 整数（数量、次数、人数等） | - |
+| float | 浮点数、金额 | db_type（如需覆盖精度） |
+| dropdown | 固定选项下拉（分类、状态等） | **options（必传）** |
+| browser | 选择人员/部门/自定义数据 | browser_id 或 browser_name |
+| date | 日期 | - |
+| checkbox | 是否、有无（二元开关） | - |
+| file | 文件/图片上传 | - |
 
 **字段命名原则**：
 - 字段名用英文、语义明确

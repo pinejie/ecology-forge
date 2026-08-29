@@ -14,6 +14,26 @@
 
 **字段类型必须传递。** 开发设计文档执行步骤中的 fields 参数必须携带完整字段类型定义（name、label、type、db_type/length/browser_id/options），与数据结构设计文档逐字一致。
 
+### 字段类型规则
+
+> 设计阶段和执行阶段必须使用同一种语言——SDK 逻辑类型。物理类型由 SDK 自动转换，设计师不需要关心。
+
+1. **设计文档的"字段类型"必须使用泛微逻辑类型**，禁止写物理类型（varchar/int/text 等数据库类型）。逻辑类型参考 `references/field-type-reference.md`。
+
+2. **逻辑类型必须来自 SDK 合法清单**（18 种）：
+   text、integer、float、amount、amount-format、textarea、browser、checkbox、dropdown、radio、multiselect、file、special、pubchoice、date、datetime、time、year
+
+3. **每个字段必须写齐类型相关参数：**
+   - text → length（默认 100，按实际需要标注）
+   - dropdown/radio/multiselect → options（必传）
+   - browser → browser_id（系统浏览框）或 browser_name（自定义浏览框），必传
+   - float → db_type（如需覆盖默认 decimal(38,2)）
+   - date/datetime/time/year → 无需额外参数，SDK 自动处理
+
+4. **日期/时间字段必须用 date/datetime/time/year**，禁止用 text 模拟。用 text 创建出来的是文本输入框，不是日期选择器。
+
+5. **业务→逻辑类型映射**参考 `references/field-type-reference.md` 的"业务场景 → 逻辑类型速查"章节，以及 `references/modeling-sdk-reference.md` 的"字段分析"部分。
+
 ---
 
 ## 设计依据
@@ -261,6 +281,7 @@ SDK tool：browser_create_browser
 | 三份文档分批生成、中间卡确认 | 需求文档已确认时纯属拖节奏 | 一次出齐，统一审阅 |
 | 开发设计文档 fields 只写字段名不写类型 | SDK 自动推断会覆盖设计值 | fields 必须携带完整类型定义 |
 | 不看 modeling-sdk-reference.md 就填参数 | 参数格式错、类型错 | 每个 tool 的参数格式和思考点都在 SDK 文档里 |
+| 设计文档写物理类型（varchar/int/text） | 和执行阶段 SDK 的逻辑类型对不上，文档和数据库不一致 | 统一用逻辑类型（dropdown/textarea/date/browser 等），见字段类型规则 |
 
 ---
 

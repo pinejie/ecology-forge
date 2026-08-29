@@ -17,23 +17,22 @@
 
 ## 二、数据模型
 
-> **本节完整复制 `01-数据结构设计.md` 中的表结构字段清单**，字段名、字段类型、OA建模类型、必填、浏览框必须与数据结构设计文档逐字一致，不得省略、不得自行推断。执行步骤中的 fields 参数必须携带完整类型参数。
+> **本节直接引用 `01-数据结构设计.md` 中的表结构**，逻辑类型和类型参数必须与数据结构设计文档完全一致，不得省略、不得自行推断。执行步骤中的 fields 参数必须使用逻辑类型。
 
 ### 2.1 表结构
 
 #### uf_xxx — {表中文名}
 
-| 字段名 | 字段类型 | OA建模类型 | 必填 | 浏览框/选项 | 说明 |
-|--------|---------|-----------|------|------------|------|
-| id | int | - | 是 | - | 主键 |
-| {field} | {varchar(200)/int/decimal(15,2)/text/char(1)} | {单行文本框/浏览框/选择框/多行文本框/附件上传/整数/浮点框} | {是/否} | {browser_id=1 / 选项列表 / -} | {说明} |
+| 字段名 | 逻辑类型 | 类型参数 | 必填 | 说明 |
+|--------|---------|---------|------|------|
+| id | - | - | 是 | 主键（系统自动生成，不需要传入 SDK） |
+| {field} | {逻辑类型} | {类型参数} | {是/否} | {说明} |
 
-> **字段类型约束：**
-> - varchar 必须标注具体长度（如 varchar(200)、varchar(50)），不得写 varchar 不带长度
-> - decimal 必须标注精度和小数位（如 decimal(15,2)），不得只写 decimal
-> - 浏览框字段必须标注 browser_id 或标注"自定义浏览框：xxx"
-> - 选择框必须在"浏览框/选项"列列出完整选项列表
-> - 日期字段必须标注 OA 建模类型为"日期浏览框"
+> **逻辑类型约束：**
+> - 必须使用 SDK 逻辑类型（text、integer、float、dropdown、textarea、browser、date 等），禁止写物理类型（varchar、int、text 等）
+> - 逻辑类型取值参考 `references/field-type-reference.md`
+> - 每个字段必须写齐类型参数（text 带 length、dropdown 带 options、browser 带 browser_id/browser_name）
+> - 日期字段必须用 date/datetime/time/year，禁止用 text 模拟
 
 ### 2.2 表间关联
 
@@ -45,7 +44,7 @@
 
 ## 三、执行步骤
 
-> **关键约束：** 创建表单步骤的 fields 参数必须携带完整字段类型定义，不得只写字段名。每个字段 dict 必须包含：name、label、type，并根据类型补充必要参数（db_type、length、browser_id、options 等）。字段定义必须与 2.1 表结构逐字一致。
+> **关键约束：** 创建表单步骤的 fields 参数必须使用逻辑类型（text/integer/dropdown/textarea/browser/date 等），禁止写物理类型。每个字段 dict 必须包含：name、label、type，并根据类型补充必要参数（db_type、length、browser_id、browser_name、options 等）。逻辑类型和类型参数必须与 2.1 表结构逐字一致。
 >
 > **自定义浏览框字段处理：**
 > - **非环形依赖**（浏览框数据源是其他表单）：执行步骤按依赖顺序排列，先创建数据源表单 → 创建浏览框 → 再创建引用浏览框的表单。字段参数使用 `"type": "browser", "browser_name": "xxx浏览框"`，SDK 通过名称精确匹配。
@@ -73,17 +72,22 @@
     ```
     [
       {"name": "field1", "label": "字段标签1", "type": "text", "length": 200},
-      {"name": "field2", "label": "字段标签2", "type": "text", "length": 50},
+      {"name": "field2", "label": "字段标签2", "type": "integer"},
       {"name": "field3", "label": "字段标签3", "type": "browser", "browser_id": 1},
       {"name": "field4", "label": "字段标签4", "type": "browser", "browser_name": "项目浏览框"},
       {"name": "field5", "label": "字段标签5", "type": "float", "db_type": "decimal(15,2)"},
       {"name": "field6", "label": "字段标签6", "type": "dropdown", "options": ["选项1", "选项2"]},
       {"name": "field7", "label": "字段标签7", "type": "textarea"},
+      {"name": "field8", "label": "字段标签8", "type": "date"},
+      {"name": "field9", "label": "字段标签9", "type": "checkbox"}
     ]
     ```
-  - **字段类型说明：**
-    - 系统浏览框：用 `"browser_id": 数字`（如人员=1，部门=3）
+  - **逻辑类型说明（参考 `references/field-type-reference.md`）：**
+    - type 必须是 SDK 逻辑类型（text/integer/float/dropdown/textarea/browser/date/checkbox 等），禁止写物理类型
+    - 系统浏览框：用 `"browser_id": 数字`（如人员=1，部门=4）
     - 自定义浏览框：用 `"browser_name": "xxx浏览框"`（必须在浏览框创建步骤之后执行）
+    - 日期/时间字段：用 `"type": "date"` / `"datetime"` / `"time"` / `"year"`，禁止用 text 模拟
+    - 选择框：用 `"type": "dropdown"`，必须带 `"options"` 参数
 - **预期结果：** 返回 form_id < 0，物理表 uf_xxx 创建成功
 - **验证方式：** 调用 `form_list_form_fields` 确认字段数量和类型与 2.1 表结构一致
 

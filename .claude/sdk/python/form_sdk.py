@@ -838,6 +838,11 @@ class FormSDK:
             "file":      {"htmltype": 6, "dbtype": "text", "type_val": 1, "qfws": 0, "textheight": 0},
             "special":   {"htmltype": 7, "dbtype": "varchar(4000)", "type_val": 0, "qfws": 0},
             "pubchoice": {"htmltype": 8, "dbtype": "integer", "type_val": 0, "qfws": 0},
+            # 日期时间类型（系统浏览框）
+            "date":      {"htmltype": 3, "dbtype": "char(10)", "type_val": 2, "qfws": 0, "browser_id": 2},      # 日期选择器
+            "datetime":  {"htmltype": 3, "dbtype": "varchar(20)", "type_val": 290, "qfws": 0, "browser_id": 290}, # 日期时间选择器
+            "time":      {"htmltype": 3, "dbtype": "char(5)", "type_val": 19, "qfws": 0, "browser_id": 19},      # 时间选择器
+            "year":      {"htmltype": 3, "dbtype": "int", "type_val": 178, "qfws": 0, "browser_id": 178},        # 年选择器
         }
 
         for i, field in enumerate(fields):
@@ -892,6 +897,12 @@ class FormSDK:
             # 同时计算 type 和 fielddbtype（不同浏览框类型规则不同）
             # 注意：所有浏览框字段的 linkfield 都为 0，浏览框识别靠 type+fielddbtype
             linkfield = 0
+
+            # 日期时间类型自动使用系统浏览框
+            if ftype in ("date", "datetime", "time", "year"):
+                field["browser_id"] = cfg["browser_id"]
+                ftype = "browser"  # 转为 browser 类型处理
+
             if ftype == "browser":
                 browser_id = self._resolve_browser_id(cursor, field)
                 if browser_id == 0:

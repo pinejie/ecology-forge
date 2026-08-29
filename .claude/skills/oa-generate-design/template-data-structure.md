@@ -10,10 +10,20 @@
 
 ### uf_xxx — {表中文名}
 
-| 字段名 | 字段类型 | OA建模类型 | 必填 | 浏览框 | 说明 |
-|--------|---------|-----------|------|------|------|
-| id | int | - | 是 | - | 主键 |
-| {field} | {类型} | {类型} | {是/否} | {如适用} | {说明} |
+| 字段名 | 逻辑类型 | 类型参数 | 必填 | 说明 |
+|--------|---------|---------|------|------|
+| id | - | - | 是 | 主键（系统自动生成，不需要传入 SDK） |
+| {field} | {逻辑类型} | {类型参数} | {是/否} | {说明} |
+
+**逻辑类型取值**参考 `references/field-type-reference.md`，常用值：text、integer、float、textarea、browser、dropdown、radio、checkbox、file、date、datetime、time、year。禁止写物理类型（varchar、int、text 等数据库类型）。
+
+**类型参数示例：**
+- text → `length=200`
+- dropdown → `options=[选项1, 选项2, 选项3]`
+- browser → `browser_id=1`（系统浏览框）或 `browser_name=xxx浏览框`（自定义浏览框）
+- float → `db_type=decimal(15,2)`（覆盖默认精度）
+- textarea → `-`（无需额外参数）
+- date → `-`（SDK 自动处理为日期选择器）
 
 （每张表单对应一个表，按依赖顺序排列）
 
