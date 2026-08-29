@@ -22,7 +22,7 @@
 
 | 类别 | 文档 | 作用 |
 |------|------|------|
-| **需求文档** | `{项目名}/01-需求文档.md` | 功能清单、角色权限、业务流程、验收标准 |
+| **需求文档** | `project/{项目名}/01-需求文档.md` | 功能清单、角色权限、业务流程、验收标准 |
 | **能力文档** | `references/capability-map.md`（能力地图）+ `references/modeling-sdk-reference.md`（SDK 参数） | 泛微能做什么、每个 tool 的参数格式和思考点 |
 | **设计规范文档** | `.claude/rules/modeling-rules.md` + `references/derivation-rules.md` + `references/scenario-classification.md` | 怎么思考、怎么推导、怎么决策 |
 
@@ -212,9 +212,9 @@ SDK tool：browser_create_browser
 
 一次性生成三个文件，结构分别见对应模板：
 
-- `{项目名}/01-数据结构设计.md` — 结构见 `template-data-structure.md`
-- `{项目名}/02-开发设计.md` — 结构见 `template-dev-design.md`
-- `{项目名}/03-测试文档.md` — 结构见 `template-test.md`
+- `project/{项目名}/01-数据结构设计.md` — 结构见 `template-data-structure.md`
+- `project/{项目名}/02-开发设计.md` — 结构见 `template-dev-design.md`
+- `project/{项目名}/03-测试文档.md` — 结构见 `template-test.md`
 
 **数据结构设计文档**包含：
 - 表结构（字段清单，按依赖顺序排列）
@@ -236,7 +236,7 @@ SDK tool：browser_create_browser
 - 权限测试
 
 生成后告诉用户：
-> "方案已出，在 `{项目名}/` 下：
+> "方案已出，在 `project/{项目名}/` 下：
 > - `01-数据结构设计.md` — 表结构 + 字段 + 浏览框 + 依赖分析
 > - `02-开发设计.md` — 执行步骤 + 前端效果
 > - `03-测试文档.md` — 测试用例
@@ -268,9 +268,9 @@ SDK tool：browser_create_browser
 
 > 本技能是**泛微二开标准流程的第二步**，完整流程见 `docs/oa-development-process.md`。
 
-**上游输入：** `{项目名}/01-需求文档.md`（第一步产出）
+**上游输入：** `project/{项目名}/01-需求文档.md`（第一步产出）
 
 **下游输出：**
-- `{项目名}/01-数据结构设计.md` — 表结构 + 字段 + 浏览框 + 依赖关系
-- `{项目名}/02-开发设计.md` — 进入第三步执行（`oa-execute-dev`）
-- `{项目名}/03-测试文档.md` — 进入第四步测试（`oa-test-verify`）
+- `project/{项目名}/01-数据结构设计.md` — 表结构 + 字段 + 浏览框 + 依赖关系
+- `project/{项目名}/02-开发设计.md` — 进入第三步执行（`oa-execute-dev`）
+- `project/{项目名}/03-测试文档.md` — 进入第四步测试（`oa-test-verify`）
