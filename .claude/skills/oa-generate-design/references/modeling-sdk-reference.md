@@ -3,7 +3,7 @@
 > 最后更新：2026-08-17
 > 维护规则：每次新增 MCP tool 或泛微能力变化时更新此文件。
 > 数据来源：`sdk/python/` 目录下所有带 `@expose` 标记的方法。
-> 通用设计原则见 `.claude/rules/modeling-rules.md`。
+> 通用设计原则见 `modeling-rules.md`。
 
 ---
 

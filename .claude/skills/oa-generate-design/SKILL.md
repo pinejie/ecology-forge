@@ -44,7 +44,7 @@
 |------|------|------|
 | **需求文档** | `project/{项目名}/01-需求文档.md` | 功能清单、角色权限、业务流程、验收标准 |
 | **能力文档** | `references/capability-map.md`（能力地图）+ `references/modeling-sdk-reference.md`（SDK 参数） | 泛微能做什么、每个 tool 的参数格式和思考点 |
-| **设计规范文档** | `.claude/rules/modeling-rules.md` + `references/derivation-rules.md` + `references/scenario-classification.md` | 怎么思考、怎么推导、怎么决策 |
+| **设计规范文档** | `references/modeling-rules.md` + `references/derivation-rules.md` + `references/scenario-classification.md` | 怎么思考、怎么推导、怎么决策 |
 
 ---
 
@@ -280,7 +280,7 @@ SDK tool：browser_create_browser
 | 跳过字段未记录 | 执行时遗漏补加步骤，字段丢失 | 输出"跳过字段清单" |
 | 三份文档分批生成、中间卡确认 | 需求文档已确认时纯属拖节奏 | 一次出齐，统一审阅 |
 | 开发设计文档 fields 只写字段名不写类型 | SDK 自动推断会覆盖设计值 | fields 必须携带完整类型定义 |
-| 不看 modeling-sdk-reference.md 就填参数 | 参数格式错、类型错 | 每个 tool 的参数格式和思考点都在 SDK 文档里 |
+| 不看 references/modeling-sdk-reference.md 就填参数 | 参数格式错、类型错 | 每个 tool 的参数格式和思考点都在 SDK 文档里 |
 | 设计文档写物理类型（varchar/int/text） | 和执行阶段 SDK 的逻辑类型对不上，文档和数据库不一致 | 统一用逻辑类型（dropdown/textarea/date/browser 等），见字段类型规则 |
 
 ---

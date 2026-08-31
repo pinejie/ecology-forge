@@ -42,6 +42,7 @@
 
 | 场景 | 规则文件 | 内容 |
 |------|---------|------|
-| 建模引擎（创建表单/模块/应用/查询列表/布局/字段联动） | `.claude/rules/modeling-rules.md` + `references/modeling-sdk-reference.md` | 通用原则（依赖排序、完整性检查）+ 各工具思考点和参数格式 |
+| 建模引擎（创建表单/模块/应用/查询列表/布局/字段联动） | `.claude/skills/oa-generate-design/references/modeling-rules.md` + `.claude/skills/oa-generate-design/references/modeling-sdk-reference.md` | 通用原则（依赖排序、完整性检查）+ 各工具思考点和参数格式 |
+| 流程钩子（流程节点前/后/出口的 Action 钩子函数） | `.claude/references/workflow-hook-rules.md` | 类结构规范、RequestInfo 用法、数据库操作、异常处理 |
 
 **强制规则**：调用任何建模引擎 SDK 工具之前，必须先读 `references/modeling-sdk-reference.md` 中对应工具的"思考点"章节，完成业务分析后再调用。禁止跳过思考点直接调用 SDK。
