@@ -110,6 +110,10 @@ class ModelingSDK:
         if not name or not name.strip():
             raise ValueError("应用名称不能为空")
 
+        # parent_id=0 或 1 视为未指定，走默认逻辑（挂在「AI实践应用」下）
+        if parent_id in (0, 1):
+            parent_id = None
+
         conn = self._connect()
         cursor = conn.cursor()
         try:
@@ -151,8 +155,8 @@ class ModelingSDK:
                     # AI实践应用 创建完成后，清一次缓存，让后续操作能查到它
                     self._clear_cache()
 
-            if parent_id <= 0:
-                raise ValueError("parent_id 不能为 0 或负数，请指定有效的上级应用 ID")
+            if parent_id < 0:
+                raise ValueError("parent_id 不能为负数，请指定有效的上级应用 ID")
 
             # 计算 allSuperFieldId 和 treelevel
             cursor.execute(

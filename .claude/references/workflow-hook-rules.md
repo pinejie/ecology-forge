@@ -95,6 +95,38 @@ if (rs.next()) {
 }
 ```
 
+### 3.4 流程元数据查询
+
+流程相关表结构：
+
+| 表名 | 用途 |
+|------|------|
+| `workflow_base` | 流程基本信息（workflowname, formid, isvalid 等） |
+| `workflow_bill` | 流程表单信息（tablename, namelabel 等） |
+| `workflow_billfield` | 表单字段信息（fieldname, fieldlabel, fielddbtype 等） |
+| `HtmlLabelInfo` | 多语言标签（indexid, labelname, languageid） |
+
+**查询流程表单字段名称和标签**：
+
+```sql
+SELECT f.fieldname, l.labelname
+FROM workflow_billfield f
+JOIN HtmlLabelInfo l ON f.fieldlabel = l.indexid
+JOIN workflow_bill b ON f.billid = b.id
+WHERE b.tablename = 'formtable_main_273'
+AND l.languageid = 7  -- 7=中文
+```
+
+**查询流程名称和表单表名**：
+
+```sql
+SELECT w.workflowname, b.tablename
+FROM workflow_base w
+JOIN workflow_bill b ON w.formid = b.id * -1  -- formid 通常是负数
+WHERE w.workflowname LIKE '%录用%'
+AND w.isvalid = 1
+```
+
 ---
 
 ## 4. 数据库操作
@@ -139,6 +171,39 @@ try {
 // 连接非默认数据源
 RecordSetDataSource rs = new RecordSetDataSource("datasourceName");
 rs.executeQuery("SELECT * FROM table_name");
+```
+
+### 4.4 建模引擎表单插入规范
+
+往建模引擎创建的表单（`uf_` 开头的表）插入数据时，**必须查询正确的 formmodeid**，禁止硬编码。
+
+**查询 formmodeid**：
+
+```sql
+-- 根据表名查询 formmodeid
+SELECT id, modename FROM modeinfo WHERE id IN (
+    SELECT DISTINCT formmodeid FROM uf_xxx WHERE formmodeid > 0
+)
+
+-- 或者直接查现有记录
+SELECT DISTINCT formmodeid FROM uf_xxx WHERE formmodeid > 0
+```
+
+**插入时必须包含 formmodeid**：
+
+```java
+// 正确：动态查询 formmodeid
+rs.executeQuery("SELECT DISTINCT formmodeid FROM uf_lzryxxb WHERE formmodeid > 0");
+int formmodeid = 0;
+if (rs.next()) {
+    formmodeid = rs.getInt("formmodeid");
+}
+
+String insertSql = "INSERT INTO uf_lzryxxb (..., formmodeid, ...) VALUES (..., ?, ...)";
+rs.executeUpdate(insertSql, ..., formmodeid, ...);
+
+// 错误：硬编码 formmodeid
+String insertSql = "INSERT INTO uf_lzryxxb (...) VALUES (..., 1152, ...)";  // 禁止！
 ```
 
 ---

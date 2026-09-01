@@ -379,6 +379,9 @@ class LayoutSDK:
 
         detail_entry_row = None
         if has_detail:
+            # 明细表前加一行 height=10 的空行分割
+            rows.append(("separator", current_row, None))
+            current_row += 1
             detail_entry_row = current_row
             rows.append(("detail", detail_entry_row, None))
             current_row += 1
@@ -630,7 +633,7 @@ class LayoutSDK:
                 c["field"] = str(f["id"])
                 c["fieldtype"] = f["type"]
                 c["font"] = {"font-size": "9pt", "font-family": "Microsoft YaHei",
-                             "color": "black", "valign": "middle"}
+                             "color": "black", "text-align": "center", "valign": "middle"}
                 c["eborder"] = d_border_full
                 c["evalue"] = f["label"]
                 d_ec.append(c)
@@ -760,7 +763,7 @@ class LayoutSDK:
                     "borderLeft": {"color": "#90badd", "style": 1},
                     "borderRight": {"color": "#90badd", "style": 1},
                     "textIndent": 0, "wordWrap": True, "textDecoration": 0,
-                    "foreColor": "black", "hAlign": 0, "vAlign": 1}}
+                    "foreColor": "black", "hAlign": 1, "vAlign": 1}}
             d_data["3"] = row3
 
             # row_4: 表尾标识
