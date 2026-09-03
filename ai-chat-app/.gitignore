@@ -1,0 +1,18 @@
+# Backend
+.venv/
+__pycache__/
+*.pyc
+
+# Frontend (handled by frontend/.gitignore, but list here too)
+node_modules/
+.next/
+
+# Docker
+.env
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
