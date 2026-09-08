@@ -409,28 +409,23 @@ class FormSDK:
             return {"name": name, "label": label, "type": "checkbox"}
 
         # ========== 3. 关键词映射到特定系统浏览框 ==========
-        # 人员类 → 人力资源(id=1)
-        if any(kw in label_str for kw in ["人", "审核", "审批", "申请", "创建", "操作", "经办", "负责人", "主管", "领导", "员工", "职员"]):
+        # --- 日期时间类（优先级最高，必须在"日期"和"人员"之前） ---
+        # "日期时间"关键词 → 日期时间浏览框(id=290)
+        if any(kw in label_str for kw in ["日期时间", "日期及时间"]):
             return {
                 "name": name, "label": label,
-                "type": "browser", "browser_id": 1,  # 人力资源
-                "is_multi": False,
+                "type": "datetime",
             }
-        # 部门类 → 部门(id=4)
-        if any(kw in label_str for kw in ["部门", "科室", "团队"]):
+        # "时间"关键词 → 中文"时间"几乎都指日期时间（如"创建时间"、"提交时间"），
+        # 而非纯时间(HH:mm)，所以默认推断为日期时间浏览框(id=290)。
+        # 纯时间字段极少见，若需要可显式指定 type: "time"。
+        # 注意：必须排在人员类("创建"等关键词)之前，否则"创建时间"会被误匹配到人力资源。
+        if any(kw in label_str for kw in ["时间"]):
             return {
                 "name": name, "label": label,
-                "type": "browser", "browser_id": 4,  # 部门
-                "is_multi": False,
+                "type": "datetime",
             }
-        # 多人 → 多人力资源(id=17)
-        if any(kw in label_str for kw in ["多", "全体", "参与"]):
-            return {
-                "name": name, "label": label,
-                "type": "browser", "browser_id": 17,  # 多人力资源
-                "is_multi": True,
-            }
-        # 日期类 → 日期浏览框，物理列存日期字符串
+        # --- 日期类（排在"时间"之后，排在人员类之前） ---
         if any(kw in label_str for kw in ["日期"]):
             return {
                 "name": name, "label": label,
@@ -438,13 +433,22 @@ class FormSDK:
                 "is_multi": False,
                 "db_type": "char(10)",  # 物理列存日期字符串
             }
-        # 时间类 → 时间浏览框，物理列存时间字符串
-        if any(kw in label_str for kw in ["时间"]):
+        # --- 纯时刻类 → 时间浏览框(id=19)，仅匹配"时刻"、"时点" ---
+        if any(kw in label_str for kw in ["时刻", "时点"]):
             return {
                 "name": name, "label": label,
                 "type": "browser", "browser_id": 19,  # 时间
                 "is_multi": False,
                 "db_type": "char(5)",  # 物理列存 HH:mm 格式
+            }
+        # --- 人员类 ---
+        # 人员类 → 人力资源(id=1)
+        # 注意："创建"关键词排除含"时间"的情况（已在上面处理）
+        if any(kw in label_str for kw in ["人", "审核", "审批", "申请", "创建", "操作", "经办", "负责人", "主管", "领导", "员工", "职员"]):
+            return {
+                "name": name, "label": label,
+                "type": "browser", "browser_id": 1,  # 人力资源
+                "is_multi": False,
             }
         # 年月类 → 年月浏览框，物理列存 varchar(7) 如 "202608"
         if any(kw in label_str for kw in ["年月"]):
