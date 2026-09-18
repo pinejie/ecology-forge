@@ -7,6 +7,7 @@ docs/
 project/
 
 # 排除敏感/本地配置
+.mcp.json
 .claude/settings.local.json
 .claude/mcp-mssql-ecology.sh
 .claude/sdk/db-config.md
