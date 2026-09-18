@@ -35,6 +35,9 @@
 3. **数据库操作**：使用 `weaver.conn.RecordSet`，不要直接用 JDBC
 4. **AI 负责思考，SDK 负责执行**：调用 SDK 前必须完成规则索引文档中的分析内容，SDK 只管执行不做分析
 5. **查数据库前先确认表结构**：遇到不熟悉的表，必须先 `SELECT TOP 1 * FROM 表名` 拿到列名再写 SQL。**禁止凭经验猜列名或表名**。列名猜错会导致 Invalid column name 等报错，浪费 token 还返工。
+6. **数据库操作只允许通过 MCP Server**：当前注册的两个 MCP Server 为 `mssql-ecology`（直连 SQL Server 只读查询）和 `weaver-oa-sdk`（SDK 封装）。**禁止通过 Bash 直接执行 sqlcmd、pyodbc 或其他方式操作数据库**，所有数据库操作必须走这两个 MCP Server。
+   - **读操作**：通过 `mssql-ecology` 执行 SELECT 查询
+   - **写操作**：必须通过 `weaver-oa-sdk` 中对应的 tool 执行。**若 SDK 中没有对应 tool，直接告知用户"当前无该操作的权限"，禁止寻找其他方式绕过**
 
 
 ## 规则索引
