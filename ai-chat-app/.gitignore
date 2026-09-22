@@ -1,7 +1,0 @@
-__pycache__/
-*.pyc
-data/
-.env
-backend/.pid
-backend/uvicorn.log
-.venv/
