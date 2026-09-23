@@ -14,6 +14,7 @@ project/
 .claude/sdk/switch-env.sh
 .claude/sdk/python/__pycache__/
 .claude/sdk/python/demo.py
+.remote_ssh.py
 .claude/formmode-engine.md
 .claude/knowledge-graph-ecology9.md
 
