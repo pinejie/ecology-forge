@@ -32,7 +32,6 @@
 
 1. **核心类在 JAR 中**：遇到找不到的类，大概率在 `classbean` 里，不要试图重新实现
 2. **不是 git 仓库**：当前目录未初始化 git，操作前确认是否需要初始化
-3. **数据库操作**：使用 `weaver.conn.RecordSet`，不要直接用 JDBC
 4. **AI 负责思考，SDK 负责执行**：调用 SDK 前必须完成规则索引文档中的分析内容，SDK 只管执行不做分析
 5. **查数据库前先确认表结构**：遇到不熟悉的表，必须先 `SELECT TOP 1 * FROM 表名` 拿到列名再写 SQL。**禁止凭经验猜列名或表名**。列名猜错会导致 Invalid column name 等报错，浪费 token 还返工。
 6. **数据库操作只允许通过 MCP Server**：当前注册的两个 MCP Server 为 `mssql-ecology`（直连 SQL Server 只读查询）和 `weaver-oa-sdk`（SDK 封装）。**禁止通过 Bash 直接执行 sqlcmd、pyodbc 或其他方式操作数据库**，所有数据库操作必须走这两个 MCP Server。
@@ -80,5 +79,6 @@
 |------|---------|------|
 | 建模引擎（创建表单/模块/应用/查询列表/布局/字段联动） | `.claude/skills/oa-generate-design/references/modeling-rules.md` + `.claude/skills/oa-generate-design/references/modeling-sdk-reference.md` | 通用原则（依赖排序、完整性检查）+ 各工具思考点和参数格式 |
 | 流程钩子（流程节点前/后/出口的 Action 钩子函数） | `.claude/references/workflow-hook-rules.md` | 类结构规范、RequestInfo 用法、数据库操作、异常处理 |
+| 定时任务（CronJob 类结构、生命周期、调度配置） | `.claude/references/scheduled-job-rules.md` | 继承 BaseCronJob、execute 规范、异常处理 |
 
 **强制规则**：调用任何建模引擎 SDK 工具之前，必须先读 `references/modeling-sdk-reference.md` 中对应工具的"思考点"章节，完成业务分析后再调用。禁止跳过思考点直接调用 SDK。
