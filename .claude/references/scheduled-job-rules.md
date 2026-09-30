@@ -22,25 +22,39 @@
 
 ## 2. 数据库操作规范
 
-### 2.1 RecordSet 使用原则
+> **数据库操作通用规范见**：`references/database-connection-rules.md`  
+> 包含：RecordSet、RecordSetTrans、RecordSetDataSource、建模引擎表单插入规范等。
 
-- 统一使用 `weaver.conn.RecordSet` 进行数据库操作
-- 优先使用参数化查询（`?` 占位符），禁止字符串拼接 SQL
+### 2.1 定时任务中的数据库连接
+
+**连接 ecology 默认数据库**：
+- 使用 `RecordSet`（标准连接）
+- 使用 `RecordSetTrans`（事务连接）
+
+**连接外部数据库**（如 ZSJXCNET）：
+- 使用 `RecordSetDataSource("数据源名称")`
+- 需在 ecology 后台配置数据源：后端维护中心 → 接口管理 → 数据源管理
+- 支持同时连接多个数据源
+
+**示例**：
+
+```java
+// 连接 ecology 数据库
+RecordSet rsEcology = new RecordSet();
+rsEcology.executeQuery("SELECT * FROM uf_xxx");
+
+// 连接外部数据库（注意：RecordSetDataSource 使用 executeSql，不是 executeQuery）
+RecordSetDataSource rsExternal = new RecordSetDataSource("ZSJXCNET");
+rsExternal.executeSql("SELECT * FROM external_table");
+```
+
+### 2.2 定时任务特殊要求
+
 - 查询前必须确认表结构，禁止猜测列名
 - 必须进行空值检查和异常处理
-
-### 2.2 批量操作规范
-
-- 循环中单条 SQL 操作数据量超过 1000 条时，必须分批处理
-- 每批处理 1000-5000 条，避免事务过大
+- 批量操作必须分批处理（每批 1000-5000 条）
 - 大数据量操作必须记录进度日志
-
-### 2.3 建模引擎表单插入规范
-
-往 `uf_` 开头的表插入数据时：
-- 必须动态查询 `formmodeid`，禁止硬编码
-- 查询方式：`SELECT DISTINCT formmodeid FROM uf_xxx WHERE formmodeid > 0`
-- 插入时必须包含 `formmodeid` 字段
+- 往建模引擎表单插入数据时，必须动态查询 formmodeid
 
 ---
 
