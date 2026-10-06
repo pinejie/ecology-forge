@@ -99,15 +99,43 @@ while (rs.next()) {
 
 ### 4.1 查询 formmodeid
 
-```sql
--- 方式1：查询现有记录
-SELECT DISTINCT formmodeid FROM uf_xxx WHERE formmodeid > 0
+**正确方式：通过 modeinfo 表，使用 formid 查询**
 
--- 方式2：通过 modeinfo 表查询
-SELECT id, modename FROM modeinfo WHERE id IN (
-    SELECT DISTINCT formmodeid FROM uf_xxx WHERE formmodeid > 0
-)
+```java
+RecordSet rs = new RecordSet();
+int formId = -1208; // 表单 ID（从 workflow_bill 表查询）
+String sql = "SELECT id FROM modeinfo WHERE formid = " + formId;
+
+rs.executeQuery(sql);
+if (rs.next()) {
+    int formmodeid = rs.getInt("id");
+    // formmodeid 就是模块 ID
+}
 ```
+
+**SQL 示例**：
+
+```sql
+-- 通过 formid 查询模块 ID（formmodeid）
+SELECT id, modename, formid FROM modeinfo WHERE formid = -1208;
+
+-- 返回结果：
+-- id   | modename       | formid
+-- 2843 | 内行收支费用明细 | -1208
+```
+
+**错误方式（已废弃）**：
+
+```sql
+-- ❌ 不要从表单中查询（表中可能没有数据）
+SELECT DISTINCT formmodeid FROM uf_xxx WHERE formmodeid > 0
+```
+
+**原因**：
+- modeinfo 表是专门存储模块信息的系统表
+- formid 是表单的唯一标识（负数，如 -1208）
+- id 是模块的唯一标识（即 formmodeid）
+- 这种方式不依赖表中是否有数据，始终可靠
 
 ### 4.2 插入时必须包含 formmodeid
 
@@ -140,6 +168,41 @@ rs.executeUpdate(insertSql, value1, value2);
 - formmodeid 在不同环境（测试/生产）中可能不同
 - 硬编码会导致数据迁移后出错
 - 动态查询确保环境无关性
+
+### 4.3 建模引擎表的系统字段
+
+建模引擎创建的表（`uf_` 开头）包含以下系统字段，插入数据时必须正确填写：
+
+| 字段名 | 类型 | 说明 |
+|--------|------|------|
+| `formmodeid` | int | 模块 ID |
+| `modedatacreater` | int | 创建人 ID |
+| `modedatacreatertype` | int | 创建人类型（通常填 0） |
+| `modedatacreatedate` | varchar(10) | 创建日期（yyyy-MM-dd） |
+| `modedatacreatetime` | varchar(8) | 创建时间（HH:mm:ss） |
+| `modedatamodifier` | int | 修改人 ID |
+| `modedatamodifydatetime` | varchar(100) | 修改日期时间（yyyy-MM-dd HH:mm:ss） |
+
+**⚠️ 建模引擎表的系统字段和流程表完全不同，禁止混用：**
+
+| 建模引擎表（uf_xxx） | 流程表（formtable_main_xxx） |
+|---------------------|--------------------------|
+| `modedatacreater` | `creater` |
+| `modedatacreatedate` | `createdate` |
+| `modedatacreatetime` | — |
+| `modedatamodifier` | `lastmodifier` |
+| `modedatamodifydatetime` | `lastmoddate` |
+
+**强制规则：插入前必须通过 `INFORMATION_SCHEMA.COLUMNS` 确认实际字段名，禁止凭经验猜测。**
+
+### 4.4 SQL 插入不触发字段联动
+
+建模引擎表单如果配置了字段联动（如选择人员后自动带出部门、岗位等），**通过 SQL INSERT 插入数据时，联动不会自动触发**。
+
+如果数据同步时需要填充联动字段，必须在代码中手动查询并赋值：
+1. 根据业务键（如身份证号）查询源表（如 HrmResource）
+2. 取出联动字段的值
+3. 在 INSERT 语句中显式填入这些字段
 
 ---
 
