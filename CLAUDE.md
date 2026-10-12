@@ -40,6 +40,38 @@
    - **写操作**：必须通过 `weaver-oa-sdk` 中对应的 tool 执行。**若 SDK 中没有对应 tool，直接告知用户"当前无该操作的权限"，禁止寻找其他方式绕过**
 
 
+## 思考深度自适应
+
+根据任务类型自动调整思考深度，无需手动切换 effort level：
+
+### 高深度场景（需求讨论、设计方案、架构决策、复杂问题）
+**触发词**：需求、设计、方案、架构、规划、策略、分析、复杂、重要、关键、为什么、如何、怎么实现
+- 必须深入分析所有边界情况和潜在风险
+- 必须考虑依赖关系、性能影响、安全因素
+- 必须给出详细的推理过程和思考链条
+- 必须主动提出可能的问题和替代方案
+- 不要快速给出简单答案，要全面分析后再给出建议
+
+### 标准深度场景（日常开发、bug 修复、代码审查、功能实现）
+**触发词**：开发、实现、修复、修改、调整、审查、review、编码、测试
+- 平衡速度与质量
+- 关注主要问题和常见边界情况
+- 适度覆盖边缘情况，不追求穷尽
+- 给出清晰的解决方案和实现步骤
+
+### 低深度场景（简单问答、小改动、格式调整、信息查询）
+**触发词**：快速、简单、随便、小改、是什么、怎么读、格式、查看、显示
+- 快速响应，直接给出答案
+- 不需要过多分析和解释
+- 简洁明了，避免冗余信息
+
+### 自适应规则
+- 根据用户消息中的关键词和语境自动判断场景
+- 如果场景不明确，默认使用标准深度
+- 高深度场景下，即使 effort level 是 medium，也要主动投入更多精力分析
+- 低深度场景下，即使 effort level 是 high，也要快速响应避免过度分析
+
+
 ## 规则索引
 
 做以下操作时，**先读对应规则文件再动手**：
@@ -47,6 +79,8 @@
 | 场景 | 规则文件 | 内容 |
 |------|---------|------|
 | 建模引擎（创建表单/模块/应用/查询列表/布局/字段联动） | `.claude/skills/oa-generate-design/references/modeling-rules.md` + `.claude/skills/oa-generate-design/references/modeling-sdk-reference.md` | 通用原则（依赖排序、完整性检查）+ 各工具思考点和参数格式 |
-| 流程钩子（流程节点前/后/出口的 Action 钩子函数） | `.claude/references/workflow-hook-rules.md` | 类结构规范、RequestInfo 用法、数据库操作、异常处理 |
+| 流程钩子（流程节点前/后/出口的 Action 钩子函数） | `.claude/references/workflow-hook-rules.md` | 类结构规范、RequestInfo 用法、异常处理（数据库操作见 database-connection-rules.md） |
+| 定时任务（CronJob 定时调度任务） | `.claude/references/scheduled-job-rules.md` | 类结构规范、BaseCronJob 用法、日期处理、异常处理（数据库操作见 database-connection-rules.md） |
+| 数据库操作（通用） | `.claude/references/database-connection-rules.md` | RecordSet/RecordSetTrans/RecordSetDataSource 用法、建模引擎表单插入规范、批量操作优化 |
 
 **强制规则**：调用任何建模引擎 SDK 工具之前，必须先读 `references/modeling-sdk-reference.md` 中对应工具的"思考点"章节，完成业务分析后再调用。禁止跳过思考点直接调用 SDK。

@@ -131,80 +131,13 @@ AND w.isvalid = 1
 
 ## 4. 数据库操作
 
-### 4.1 RecordSet（常用）
+> **数据库操作通用规范见**：`references/database-connection-rules.md`  
+> 包含：RecordSet、RecordSetTrans、RecordSetDataSource、建模引擎表单插入规范等。
 
-```java
-RecordSet rs = new RecordSet();
-
-// 查询
-rs.executeQuery("SELECT * FROM uf_xxx WHERE id=?", id);
-if (rs.next()) {
-    String value = rs.getString("fieldName");
-    int count = rs.getInt("countField");
-}
-
-// 更新/插入/删除
-rs.executeUpdate("UPDATE uf_xxx SET field1=? WHERE id=?", value, id);
-```
-
-### 4.2 RecordSetTrans（事务）
-
-```java
-RecordSetTrans rs = new RecordSetTrans();
-try {
-    // 业务逻辑
-    rs.executeUpdate("INSERT INTO uf_xxx ...");
-    rs.executeUpdate("UPDATE uf_yyy ...");
-    rs.commit();  // 成功后提交
-    return "1";
-} catch (Exception e) {
-    rs.rollback();  // 异常时回滚
-    requestInfo.getRequestManager().setMessagecontent("错误: " + e.getMessage());
-    log.error("操作失败", e);
-    return "0";
-}
-```
-
-### 4.3 RecordSetDataSource（其它数据源）
-
-```java
-// 连接非默认数据源
-RecordSetDataSource rs = new RecordSetDataSource("datasourceName");
-rs.executeQuery("SELECT * FROM table_name");
-```
-
-### 4.4 建模引擎表单插入规范
-
-往建模引擎创建的表单（`uf_` 开头的表）插入数据时，**必须查询正确的 formmodeid**，禁止硬编码。
-
-**查询 formmodeid**：
-
-```sql
--- 根据表名查询 formmodeid
-SELECT id, modename FROM modeinfo WHERE id IN (
-    SELECT DISTINCT formmodeid FROM uf_xxx WHERE formmodeid > 0
-)
-
--- 或者直接查现有记录
-SELECT DISTINCT formmodeid FROM uf_xxx WHERE formmodeid > 0
-```
-
-**插入时必须包含 formmodeid**：
-
-```java
-// 正确：动态查询 formmodeid
-rs.executeQuery("SELECT DISTINCT formmodeid FROM uf_lzryxxb WHERE formmodeid > 0");
-int formmodeid = 0;
-if (rs.next()) {
-    formmodeid = rs.getInt("formmodeid");
-}
-
-String insertSql = "INSERT INTO uf_lzryxxb (..., formmodeid, ...) VALUES (..., ?, ...)";
-rs.executeUpdate(insertSql, ..., formmodeid, ...);
-
-// 错误：硬编码 formmodeid
-String insertSql = "INSERT INTO uf_lzryxxb (...) VALUES (..., 1152, ...)";  // 禁止！
-```
+**流程钩子中的特殊说明**：
+- 使用 `RecordSet` 连接 ecology 默认数据库
+- 使用 `RecordSetTrans` 处理事务（成功 commit，失败 rollback）
+- 往建模引擎表单插入数据时，必须动态查询 formmodeid
 
 ---
 

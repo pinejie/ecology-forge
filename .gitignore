@@ -28,3 +28,6 @@ project/
 # 排除 IDE
 .idea/
 .vscode/
+.mcp.json
+cad-env/
+node_modules/
